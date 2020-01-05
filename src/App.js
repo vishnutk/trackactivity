@@ -24,11 +24,13 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import TextField from '@material-ui/core/TextField';
-import { Avatar, GridList, GridListTile, GridListTileBar, Modal } from '@material-ui/core';
-import InfoIcon from '@material-ui/icons/Info';
-
+import { Avatar, Input, GridList, GridListTile, GridListTileBar, Modal } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
   root: {
     flexGrow: 1,
   },
@@ -66,7 +68,7 @@ function getModalStyle() {
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`,
   };
-} 
+}
 
 function ExerciseList(props)  {
   const classes = useStyles();
@@ -99,37 +101,77 @@ function ExerciseList(props)  {
     },
   ];
 
-  const saveRecord = (user, activity) => {
+  const saveRecord = () => {
     var record = {
-      user: user,
+      user: userEmail,
       ts: new Date(),
-      activity: activity,
-      qty: 5
+      activity: userActivity,
+      qty: distance
     };
     var db = firebase.firestore();
     db.collection("activity").add(record)
     .then(function(docRef) {
         console.log("Document written with ID: ", docRef.id);
+        handleClose();
     })
     .catch(function(error) {
         console.error("Error adding document: ", error);
     });
   };
 
+  const [open, setOpen] = React.useState(false);
+  const [userEmail, setUserEmail] = React.useState(null);
+  const [userActivity, setUserActivity] = React.useState(null);
+  const [modalStyle] = React.useState(getModalStyle);
+  const [distance, setDistance] = React.useState(0);
+  const [unit, setUnit] = React.useState(0);
+
+  const handleOpen = (user, tile) => {
+    console.log(tile);
+    setUserEmail(user.email);
+    setUserActivity(tile.title);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const values = {};
+  const handleChanges = () => {
+    console.log(values);
+  };
+
   const modal = () => (
     <Modal
       aria-labelledby="simple-modal-title"
       aria-describedby="simple-modal-description"
-      open
+      open={open}
+      onClose={handleClose}
     >
-      <div  className={classes.paper}>
-        <h2 id="simple-modal-title">Text in a modal</h2>
-        <p id="simple-modal-description">
-          Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-        </p>
+      <div  className={classes.paper} style={modalStyle}>
+        <h2 id="simple-modal-title">Enter activity value</h2>
+        <div>
+          <TextField
+            id="standard-full-width"
+            label="Distance"
+            style={{ margin: 8 }}
+            placeholder="Enter distance"
+            helperText="Enter distance helper text!"
+            fullWidth
+            margin="normal"
+            InputLabelProps={{
+              shrink: true,
+            }}
+            onChange={event => setDistance(event.target.value)}
+          />
+          <Button variant="contained" color="primary" onClick={() => saveRecord()}>
+            Save
+          </Button>
+        </div>
       </div>
-    </Modal>    
-  );  
+    </Modal>
+  );
 
   return (
     <header className="App-header">
@@ -142,8 +184,8 @@ function ExerciseList(props)  {
               title={tile.title}
               subtitle={<span>target: {tile.target} {tile.unit}</span>}
               actionIcon={
-                <Button variant="contained" color="primary" onClick={() => modal() /*saveRecord(user.email, tile.title)*/}>
-                Record
+                <Button variant="contained" color="primary" onClick={() => handleOpen(user, tile)}>
+                  Record
                 </Button>
               }
             />
@@ -151,6 +193,7 @@ function ExerciseList(props)  {
           ))}
         </GridList>
       </div>
+      { modal() }
     </header>
   )
 }
@@ -193,8 +236,8 @@ function App() {
       messagingSenderId: "315482937147",
       appId: "1:315482937147:web:36e0953768b874fd33c91e",
       measurementId: "G-YPND24F0WC"
-    };       
-    firebaseProject = firebase.initializeApp(firebaseConfig);    
+    };
+    firebaseProject = firebase.initializeApp(firebaseConfig);
   }
 
   const signInSuccess = (result) => {
@@ -216,7 +259,7 @@ function App() {
     // The email of the user's account used.
     var email = error.email;
     // The firebase.auth.AuthCredential type that was used.
-    var credential = error.credential;      
+    var credential = error.credential;
     // ...
     setSignedIn(false);
     console.log("Error");
@@ -231,7 +274,7 @@ function App() {
 /*
   const signin = () => () => {
     firebaseInit();
-    
+
     var ui = new firebaseui.auth.AuthUI(firebase.auth());
 
     ui.start('#firebaseui-auth-container', {
@@ -292,13 +335,13 @@ function App() {
   );
 
   const loginArea = () => (
-    <header className="App-header">              
+    <header className="App-header">
       Welcome to <h1>Activity Tracker</h1>
       <Button variant="contained" color="primary" onClick={signin2()}>
       Login to continue.
       </Button>
-      <div id="firebaseui-auth-container" className={classes.signInButton} ></div> 
-    </header> 
+      <div id="firebaseui-auth-container" className={classes.signInButton} ></div>
+    </header>
   );
 
   function GoogleUserAvatar(props) {
@@ -326,13 +369,12 @@ function App() {
             </Typography>
 
             <GoogleUserAvatar user={user} signedIn={signedIn}/>
-            
           </Toolbar>
         </AppBar>
       </div>
 
-      {signedIn? (<ExerciseList user={user} />) : loginArea()}
-      
+      {signedIn? (<ExerciseList user={user} />) : loginArea() }
+
       <BottomNavigation
         value={value}
         onChange={(event, newValue) => {
