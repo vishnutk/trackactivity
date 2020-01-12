@@ -17,11 +17,7 @@ import SelectGoal from './SelectGoal';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link,
-  Redirect,
-  useHistory,
-  useLocation
+  Route
 } from "react-router-dom";
 import DB from './DB';
 
