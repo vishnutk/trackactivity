@@ -1,53 +1,77 @@
 import React from 'react';
 import './App.css';
 import Button from '@material-ui/core/Button';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import DB from './DB';
 import Styles from './Styles';
-import {
-  Redirect, useParams
-} from "react-router-dom";
-
+import { Redirect, useParams, withRouter } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
-import {
-    DatePicker
-  } from 'react-date-picker';
+import { DatePicker } from 'react-date-picker';
 
-export default function AddGoal(props) {
+function AddGoal(props) {
 
+    console.log("in add goal");
     const classes = Styles().useStyles();
-    const user = props.user;
+    const user = props.user; //DB().getUser();
+    const history = props.history;
 
-    const {activity} = useParams();
+    const {activity, unit, suggested} = useParams();
 
     const [loaded, setLoaded] = React.useState(false);    
     const [selectedDate, setSelectedDate] = React.useState(new Date());
-
-    const handleDateChange = date => {
-      setSelectedDate(date);
-    };    
+    const [target, setTarget] = React.useState(0);
+    const [saved, setSaved] = React.useState(false);
 
     const Redir = () =>  (
-        <Redirect to='/login' />
+        <Redirect to='/' />
     )
+
+    const RedirectToGoals = () => (
+      <Redirect to='/goals' />
+    )
+
+    const saveTarget = () => {
+      if (user) {
+        DB().saveTarget(user.email, activity, target, unit);
+        setSaved(true);
+      }
+    }
+
+    const handleTargetChange = props => event =>  {
+      console.log(event);
+      setTarget(event.target.value);
+    }
 
     const Content = () => (
         <header className="App-header">
-        <div className={classes.list}>
-            {/* <label>{user.displayName}</label> */}
+          <div>
+            <label>{user.displayName}</label>
+          </div>
+        <div className={classes.Button}>
             <label>{activity}</label>
-            {/* <DatePicker
-                onChange={handleDateChange}
-                value={selectedDate}
-            />             */}
-            {/* <MuiPickersUtilsProvider utils={MomentUtils}>
-                <DatePicker value={selectedDate} />
-            </MuiPickersUtilsProvider>             */}
+            <TextField id="target" label="Select your target." 
+            defaultValue={suggested} required 
+            value={target}
+            onChange={handleTargetChange('target')}
+            InputProps={{
+              startAdornment: <InputAdornment position="start">{unit}</InputAdornment>,
+            }}
+            />
+        </div>
+        <div>
+        <Button variant="contained" color="primary" onClick={() =>  saveTarget()}>
+          Save Target
+        </Button>
         </div>
       </header>  
     );
-    
-    return (<Content/>);
-    // return (
-    //     user ? (<Content/>) : (<Redir/>)     
-    // );
+
+
+    return (
+        user ? 
+          saved ? (<RedirectToGoals/>) : (<Content/>) 
+          : (<Redir/>)     
+    );
 }
+
+export default AddGoal;

@@ -27,7 +27,12 @@ export default function Styles() {
             marginLeft: theme.spacing(1),
             marginRight: theme.spacing(1),
             width: 200,
-          },
+        },
+        fab: {
+          position: 'absolute',
+          bottom: theme.spacing(2),
+          right: theme.spacing(2),
+        }, 
       }));    
 
       return {

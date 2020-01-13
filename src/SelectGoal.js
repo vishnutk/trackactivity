@@ -7,13 +7,15 @@ import DB from './DB';
 import Styles from './Styles';
 
 import { GridList, GridListTile, GridListTileBar } from '@material-ui/core';
-import {
-    Redirect
-  } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 export default function SelectGoal(props) {
 
     const classes = Styles().useStyles();
+    console.log("select goal");
+    console.log(props);
+    console.log(props.user);
+    console.log(DB().getUser());
 
     const [goals, setGoals] = React.useState(null);
     const [loaded, setLoaded] = React.useState(false);  
@@ -23,8 +25,7 @@ export default function SelectGoal(props) {
         props.onTargetChange(e.target.value);
     }
     const selectGoal = (goal) => {
-        alert("adding:" + goal.name);
-        setSelectedGoal(goal.name);
+        setSelectedGoal(goal);
     }
 
     if (!loaded) {
@@ -33,7 +34,7 @@ export default function SelectGoal(props) {
     }
 
     const Redir = () =>  (
-      <Redirect to={'/goalsadd/'+ selectedGoal} />
+      <Redirect to={'/goalsadd/'+ selectedGoal.name + "/" + selectedGoal.unit}/>
     )
 
     const Tiles = () =>  (
@@ -48,9 +49,12 @@ export default function SelectGoal(props) {
                 title={tile.name}
                 subtitle={<span>Target: {tile.suggested} {tile.unit}</span>}
                 actionIcon={
-                  <Button variant="contained" color="primary" onClick={() => selectGoal(tile)}>
-                  Select
+
+                <Link to={"/goalsadd/" + tile.name + "/" + tile.unit + "/" + tile.suggested}>
+                  <Button variant="contained" color="primary">
+                    Select
                   </Button>
+                </Link>                     
                 }
               />
             </GridListTile>

@@ -6,6 +6,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { Avatar } from '@material-ui/core';
+import * as firebase from 'firebase'
 
 import Goals from './Goals';
 import Login from './Login';
@@ -13,28 +14,55 @@ import Styles from './Styles';
 import Home from './Home';
 import AddGoal from './AddGoal';
 import SelectGoal from './SelectGoal';
+import AddActivity from './AddActivity'
 
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  withRouter
 } from "react-router-dom";
 import DB from './DB';
 
 function App() {
   const classes = Styles().useStyles();
+  console.log("reinit app");
+  console.log("firstTime");
   DB().firebaseInit();
-  
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    
+    if (user) {
+        console.log("in callback");
+        console.log(user); 
+        setUser(user);
+        setSignedIn(true);
+    } else {
+      //
+    }
+    setLoaded(true);
+  });
+
   const [signedIn, setSignedIn] = React.useState(false);
+  const [loaded, setLoaded] = React.useState(false);
   const [user, setUser] = React.useState(null);
   const [targets, setTarget] = React.useState(null);
 
-  const signInSuccess = (user) => {
-    if (user) {
-      setUser(user);
+  const signInSuccess = (u) => {
+    if (u) {
+      setUser(u);
+      DB().setUser(u);
       setSignedIn(true);
-      console.log("in callback");
-      console.log(user);      
+      console.log("in signin callback");
+      console.log(u);      
+    }
+  }
+
+  const targetsLoaded = (t) => {
+    console.log("in target callback");
+    if (t) {
+      console.log(t);  
+      setTarget(t);
     }
   }
 
@@ -62,20 +90,24 @@ function App() {
       <Router>
       <Switch>
           <Route exact path="/">
-            <Home />
+            <Home user={user} loaded={loaded}/>
           </Route>
           <Route path="/login">
             <Login onSignIn={signInSuccess} />
           </Route>
-          <Route path="/goalsadd/:activity" >
+          <Route path="/goalsadd/:activity/:unit" >
             <AddGoal user={user} />
           </Route>
           <Route path="/goalsselect">
-            <SelectGoal />
+            <SelectGoal user={user}/>
           </Route>
-          <Route path="/goals" user={user}>
-            <Goals />
+          <Route path="/goals" >
+            <Goals user={user} onTargetLoad={targetsLoaded}/>
           </Route>
+          <Route path="/addactivity" >
+            <AddActivity user={user}/>
+          </Route>
+
           {/* <Route path="/activity">
             <Activity />
           </Route> */}

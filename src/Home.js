@@ -5,15 +5,30 @@ import {
     Redirect
   } from "react-router-dom";
 
-export default function Home() {
+export default function Home(props) {
+
+  console.log("home");
+  console.log(props);
+
     return (
         <div>
-        <h1>Loading...</h1>
-        <Redirect
+        {!props.loaded ? 
+            (<h1>Loading...</h1>) :
+          props.user ? (
+            <Redirect
+            to={{
+              pathname: "/goals"
+            }}
+          />
+        ) : (
+          <Redirect
             to={{
               pathname: "/login"
             }}
           />
+        
+        )
+        }
           </div>
     )
 }

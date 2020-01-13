@@ -11,7 +11,7 @@ export default function Login (props) {
     const classes = Styles().useStyles();
 
     const [goals, setGoals] = React.useState(null);
-
+    
     const handleChange = (user) => {
         props.onSignIn(user);
     }
@@ -44,8 +44,12 @@ export default function Login (props) {
 
 
     const signin2 = () => () => {
-        var provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider).then(signInSuccess).catch(signInError);
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+        .then(function() {
+          var provider = new firebase.auth.GoogleAuthProvider();
+          firebase.auth().signInWithPopup(provider).then(signInSuccess).catch(signInError);
+        })
+        .catch(signInError);
       };    
 
       if (signedIn) {
