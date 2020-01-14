@@ -1,5 +1,4 @@
 import React from 'react';
-import * as firebaseui from 'firebaseui'
 import * as firebase from 'firebase'
 import Button from '@material-ui/core/Button';
 import Styles from './Styles';
@@ -10,8 +9,6 @@ export default function Login (props) {
     const [signedIn, setSignedIn] = React.useState(false);
     const classes = Styles().useStyles();
 
-    const [goals, setGoals] = React.useState(null);
-    
     const handleChange = (user) => {
         props.onSignIn(user);
     }
@@ -19,9 +16,7 @@ export default function Login (props) {
     const signInSuccess = (result) => {
         if (result) {
           // This gives you a Google Access Token. You can use it to access the Google API.
-          var token = result.credential.accessToken;
-          console.log("success");
-          console.log(result.user);
+          // var token = result.credential.accessToken;
           // The signed-in user info.
           handleChange(result.user);
           setSignedIn(true);
@@ -29,17 +24,14 @@ export default function Login (props) {
       }
     
       const signInError = (error) => {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;      
+        // // The email of the user's account used.
+        // var email = error.email;
+        // // The firebase.auth.AuthCredential type that was used.
+        // var credential = error.credential;      
         // ...
         //setSignedIn(false);
         console.log("Error");
-        console.log(email);
+        console.log(error);
       };
 
 

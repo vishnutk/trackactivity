@@ -21,13 +21,6 @@ export default function SelectGoal(props) {
     const [loaded, setLoaded] = React.useState(false);  
     const [selectedGoal, setSelectedGoal] =  React.useState(null); 
 
-    const handleChange = (e) => {
-        props.onTargetChange(e.target.value);
-    }
-    const selectGoal = (goal) => {
-        setSelectedGoal(goal);
-    }
-
     if (!loaded) {
         DB().fetchGoals(setGoals);
         setLoaded(true);

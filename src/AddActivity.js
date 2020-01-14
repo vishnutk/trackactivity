@@ -2,47 +2,45 @@ import React from 'react';
 import './App.css';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import Snackbar from '@material-ui/core/Snackbar';
 import DB from './DB';
 import Styles from './Styles';
-import { Redirect, useParams, withRouter , useLocation} from "react-router-dom";
+import { Redirect, useLocation} from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
-import { DatePicker } from 'react-date-picker';
 
 function AddActivity(props) {
 
-    console.log("in AddActivity");
-    console.log(props);
     const classes = Styles().useStyles();
     const user = props.user; 
     let location = useLocation();
     const target = location && location.state? location.state.target: null;
 
-    const [loaded, setLoaded] = React.useState(false);  
     const [selectedDate, setSelectedDate] = React.useState(new Date());
     const [saved, setSaved] = React.useState( target ? false : true);
     const [amount, setAmount] = React.useState(0);
-    const [open, setOpen] = React.useState(false);
 
     const Redir = () =>  (
         <Redirect to='/' />
     )
 
     const RedirectToGoals = () => (
-      <Redirect to='/goals' />
+      <Redirect to='/goals?msg=success' />
     )
 
     const saveActivity = () => {
       if (user) {
         console.log("in save activity");
-        DB().saveActivity(user.email, target.goal, amount);
-        setOpen(true);
+        DB().saveActivity(user.email, target.goal, amount, selectedDate);
+        DB().updateTarget(target, amount);
         setSaved(true);
       }
     }
 
     const handleCountChange = props => event =>  {
         setAmount(event.target.value);
+    }
+
+    const handleDateChange = props => event => {
+        setSelectedDate(event.target.value);
     }
 
     const Content = () => (
@@ -59,6 +57,11 @@ function AddActivity(props) {
             InputProps={{
               startAdornment: <InputAdornment position="start">{target.unit}</InputAdornment>,
             }}
+            />
+            <TextField id="activityDate" label="Enter date." 
+            required 
+            value={selectedDate}
+            onChange={handleDateChange('date')}
             />
         </div>
         <div>

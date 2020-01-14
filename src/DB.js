@@ -1,11 +1,10 @@
 import * as firebase from 'firebase'
 
 export default function DB() {
-
-    let firebaseProject = null;
     let user = null;
     let targets = null;
     let goals = null;
+    let firebaseProject = null;
 
     const firebaseInit = () => {
         const firebaseConfig = {
@@ -20,15 +19,8 @@ export default function DB() {
         };    
         if (!firebase.apps.length) {
             firebaseProject = firebase.initializeApp(firebaseConfig); 
-            
-            // console.log( "testing..in DB" );
-            // var auth = firebase.auth();
-            // console.log(firebaseProject);
-            // console.log(auth);
-            // console.log(auth.currentUser);             
         }                
     }
-
 
     const getGoals = (callback) => {
         if (goals) {
@@ -55,52 +47,46 @@ export default function DB() {
     };
 
     const fetchGoals = (callback) => {
-    var db = firebase.firestore();
-    let goals = [];
-    db.collection("goals").get().then(function(querySnapshot) {
-        querySnapshot.forEach(function (doc) {
-        console.log(doc.id, ' => ', doc.data());
-        goals.push(doc.data());
-
-    }); 
-    callback(goals);
-    }).catch(function(error){
-        console.log(error);
-    })
+        var db = firebase.firestore();
+        let goals = [];
+        db.collection("goals").get().then(function(querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                goals.push(doc.data());
+            }); 
+            callback(goals);
+        }).catch(function(error){
+            console.log(error);
+            callback(goals);
+        })
     };
 
     const fetchTargets = (callback, user) => {
-    let goals = [];
-    const db = firebase.firestore();
+        let goals = [];
+        const db = firebase.firestore();
 
-    console.log("Fetch Targets:" + user);
-    db.collection("targets").where('user', '==', user).get().then(function(querySnapshot) {
-        querySnapshot.forEach(function (doc) {
-        console.log(doc.id, ' => ', doc.data());
-        goals.push(doc.data());
-    }); 
-    callback(goals);
-    }).catch(function(error){
-        console.log(error);
-        callback(null);
-    })
+        db.collection("targets").where('user', '==', user).get().then(function(querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                const data = doc.data();
+                data.id = doc.id;
+                goals.push(data);
+            }); 
+            callback(goals);
+        }).catch(function(error){
+            console.log(error);
+            callback(goals);
+        })
     };    
 
-    const saveActivity = (user, activity, qty) => {
-    const db = firebase.firestore();
-    var record = {
-        user: user,
-        ts: new Date(),
-        activity: activity,
-        qty: qty
-    };
-    db.collection("activity").add(record)
-    .then(function(docRef) {
-        console.log("Document written with ID: ", docRef.id);
-    })
-    .catch(function(error) {
-        console.error("Error adding document: ", error);
-    });
+    const saveActivity = (user, activity, qty, actDate) => {
+        const db = firebase.firestore();
+        
+        var record = {
+            user: user,
+            ts: actDate || new Date(),
+            activity: activity,
+            qty: qty
+        };
+        return db.collection("activity").add(record);
     };
 
     const saveTarget = (user, activity, target, unit) => {
@@ -111,16 +97,19 @@ export default function DB() {
             startDate: new Date(),
             goal: activity,
             target: target,
-            unit: unit
+            unit: unit,
+            achieved: 0
         };
-        db.collection("targets").add(record)
-        .then(function(docRef) {
-            //console.log("Document written with ID: ", docRef.id);
-        })
-        .catch(function(error) {
-            //console.error("Error adding document: ", error);
-        });
-        };
+        return db.collection("targets").add(record);
+    };
+
+    const updateTarget = (target, amount) => {
+        const db = firebase.firestore();
+        const id = target.id;
+        target.achieved = Number((target.achieved? target.achieved: 0)) + Number(amount);
+        target.lastModified = new Date();
+        return db.collection("targets").doc(id).set(target);
+    }
     
     return {
         fetchGoals: fetchGoals,
@@ -131,6 +120,7 @@ export default function DB() {
         getGoals: getGoals,
         getTargets: getTargets,
         getUser: getUser,
-        setUser: setUser
+        setUser: setUser,
+        updateTarget: updateTarget
     }
 }

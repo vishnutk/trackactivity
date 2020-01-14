@@ -6,19 +6,16 @@ import DB from './DB';
 import Styles from './Styles';
 import { Redirect, useParams, withRouter } from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
-import { DatePicker } from 'react-date-picker';
 
 function AddGoal(props) {
 
     console.log("in add goal");
     const classes = Styles().useStyles();
     const user = props.user; //DB().getUser();
-    const history = props.history;
 
     const {activity, unit, suggested} = useParams();
 
     const [loaded, setLoaded] = React.useState(false);    
-    const [selectedDate, setSelectedDate] = React.useState(new Date());
     const [target, setTarget] = React.useState(0);
     const [saved, setSaved] = React.useState(false);
 

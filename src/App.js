@@ -19,8 +19,7 @@ import AddActivity from './AddActivity'
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  withRouter
+  Route
 } from "react-router-dom";
 import DB from './DB';
 
@@ -53,15 +52,11 @@ function App() {
       setUser(u);
       DB().setUser(u);
       setSignedIn(true);
-      console.log("in signin callback");
-      console.log(u);      
     }
   }
 
   const targetsLoaded = (t) => {
-    console.log("in target callback");
     if (t) {
-      console.log(t);  
       setTarget(t);
     }
   }
@@ -108,13 +103,8 @@ function App() {
             <AddActivity user={user}/>
           </Route>
 
-          {/* <Route path="/activity">
-            <Activity />
-          </Route> */}
         </Switch>
       </Router>
-
-      {/* {signedIn? (<ExerciseList user={user} goals={goals}/>) : loginArea()} */}
       
       {/* <BottomNavigation
         value={value}
