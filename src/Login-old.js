@@ -1,7 +1,7 @@
 import React from 'react';
 import * as firebase from 'firebase'
 import Button from '@material-ui/core/Button';
-import Styles from './Styles';
+import Styles from './Styles-old';
 import { Redirect
   } from "react-router-dom";
 
@@ -22,12 +22,12 @@ export default function Login (props) {
           setSignedIn(true);
         }
       }
-    
+
       const signInError = (error) => {
         // // The email of the user's account used.
         // var email = error.email;
         // // The firebase.auth.AuthCredential type that was used.
-        // var credential = error.credential;      
+        // var credential = error.credential;
         // ...
         //setSignedIn(false);
         console.log("Error");
@@ -42,18 +42,18 @@ export default function Login (props) {
           firebase.auth().signInWithPopup(provider).then(signInSuccess).catch(signInError);
         })
         .catch(signInError);
-      };    
+      };
 
       if (signedIn) {
           return (<Redirect to="/goals" />)
       }
-      return (  
-        <header className="App-header">              
+      return (
+        <header className="App-header">
         Welcome to <h1>Activity Tracker</h1>
             <Button variant="contained" color="primary" onClick={signin2()}>
             Login to continue.
             </Button>
-            <div id="firebaseui-auth-container" className={classes.signInButton} ></div> 
-        </header> 
+            <div id="firebaseui-auth-container" className={classes.signInButton} ></div>
+        </header>
       );
     }

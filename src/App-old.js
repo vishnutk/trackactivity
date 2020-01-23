@@ -10,7 +10,7 @@ import * as firebase from 'firebase'
 
 import Goals from './Goals';
 import Login from './Login';
-import Styles from './Styles';
+import Styles from './Styles-old';
 import Home from './Home';
 import AddGoal from './AddGoal';
 import SelectGoal from './SelectGoal';
@@ -30,10 +30,10 @@ function App() {
   DB().firebaseInit();
 
   firebase.auth().onAuthStateChanged(function(user) {
-    
+
     if (user) {
         console.log("in callback");
-        console.log(user); 
+        console.log(user);
         setUser(user);
         setSignedIn(true);
     } else {
@@ -105,7 +105,7 @@ function App() {
 
         </Switch>
       </Router>
-      
+
       {/* <BottomNavigation
         value={value}
         onChange={(event, newValue) => {

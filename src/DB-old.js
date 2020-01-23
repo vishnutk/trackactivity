@@ -16,10 +16,10 @@ export default function DB() {
             messagingSenderId: "315482937147",
             appId: "1:315482937147:web:36e0953768b874fd33c91e",
             measurementId: "G-YPND24F0WC"
-        };    
+        };
         if (!firebase.apps.length) {
-            firebaseProject = firebase.initializeApp(firebaseConfig); 
-        }                
+            firebaseProject = firebase.initializeApp(firebaseConfig);
+        }
     }
 
     const getGoals = (callback) => {
@@ -52,7 +52,7 @@ export default function DB() {
         db.collection("goals").get().then(function(querySnapshot) {
             querySnapshot.forEach(function (doc) {
                 goals.push(doc.data());
-            }); 
+            });
             callback(goals);
         }).catch(function(error){
             console.log(error);
@@ -69,17 +69,17 @@ export default function DB() {
                 const data = doc.data();
                 data.id = doc.id;
                 goals.push(data);
-            }); 
+            });
             callback(goals);
         }).catch(function(error){
             console.log(error);
             callback(goals);
         })
-    };    
+    };
 
     const saveActivity = (user, activity, qty, actDate) => {
         const db = firebase.firestore();
-        
+
         var record = {
             user: user,
             ts: actDate || new Date(),
@@ -110,7 +110,7 @@ export default function DB() {
         target.lastModified = new Date();
         return db.collection("targets").doc(id).set(target);
     }
-    
+
     return {
         fetchGoals: fetchGoals,
         fetchTargets: fetchTargets,

@@ -4,7 +4,7 @@ import './App.css';
 import Button from '@material-ui/core/Button';
 
 import DB from './DB';
-import Styles from './Styles';
+import Styles from './Styles-old';
 
 import { GridList, GridListTile, GridListTileBar } from '@material-ui/core';
 import { Link, Redirect } from "react-router-dom";
@@ -18,8 +18,8 @@ export default function SelectGoal(props) {
     console.log(DB().getUser());
 
     const [goals, setGoals] = React.useState(null);
-    const [loaded, setLoaded] = React.useState(false);  
-    const [selectedGoal, setSelectedGoal] =  React.useState(null); 
+    const [loaded, setLoaded] = React.useState(false);
+    const [selectedGoal, setSelectedGoal] =  React.useState(null);
 
     if (!loaded) {
         DB().fetchGoals(setGoals);
@@ -47,7 +47,7 @@ export default function SelectGoal(props) {
                   <Button variant="contained" color="primary">
                     Select
                   </Button>
-                </Link>                     
+                </Link>
                 }
               />
             </GridListTile>
@@ -57,7 +57,7 @@ export default function SelectGoal(props) {
             <span>Fetching.</span>
         )}
         </div>
-      </header>          
+      </header>
     );
 
     return (selectedGoal? (<Redir/>): (<Tiles/>));

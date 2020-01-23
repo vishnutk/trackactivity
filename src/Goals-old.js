@@ -3,7 +3,7 @@ import { GridList, GridListTile, GridListTileBar } from '@material-ui/core';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import Styles from './Styles';
+import Styles from './Styles-old';
 import DB from './DB'
 import Snackbar from '@material-ui/core/Snackbar';
 
@@ -50,7 +50,7 @@ export default function Goals(props) {
         <div>
             <h1>Fetching...</h1>
             <Link to="/goalsselect">Add Goal</Link>
-        </div>            
+        </div>
     );
 
     const Redir = () =>  (
@@ -63,8 +63,8 @@ export default function Goals(props) {
         <Button variant="contained" color="primary">
           Add Goal
         </Button>
-      </Link>        
-       
+      </Link>
+
         <Fab color="primary" aria-label="Add Goal" className={classes.fab}>
           <AddIcon />
         </Fab>
@@ -83,7 +83,7 @@ export default function Goals(props) {
                     <Button variant="contained" color="primary">
                       Record
                     </Button>
-                  </Link>  
+                  </Link>
                 }
               />
             </GridListTile>
@@ -99,13 +99,13 @@ export default function Goals(props) {
         open={successMessage}
         onClose={handleClose}
         message="Saved Successfully"
-      />        
+      />
       </header>
     )
 
     return user
     ? (loaded && targets && targets.length > 0
-        ? (<Tiles/>) 
-        : (<Loading/>)) 
+        ? (<Tiles/>)
+        : (<Loading/>))
     : <Redir/>;
 }

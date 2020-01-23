@@ -3,14 +3,14 @@ import './App.css';
 import Button from '@material-ui/core/Button';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import DB from './DB';
-import Styles from './Styles';
+import Styles from './Styles-old';
 import { Redirect, useLocation} from "react-router-dom";
 import TextField from '@material-ui/core/TextField';
 
 function AddActivity(props) {
 
     const classes = Styles().useStyles();
-    const user = props.user; 
+    const user = props.user;
     let location = useLocation();
     const target = location && location.state? location.state.target: null;
 
@@ -50,16 +50,16 @@ function AddActivity(props) {
           </div>
         <div className={classes.Button}>
             <label>{target.goal}</label>
-            <TextField id="amount" label="Enter amount." 
-            required 
+            <TextField id="amount" label="Enter amount."
+            required
             value={amount}
             onChange={handleCountChange('amount')}
             InputProps={{
               startAdornment: <InputAdornment position="start">{target.unit}</InputAdornment>,
             }}
             />
-            <TextField id="activityDate" label="Enter date." 
-            required 
+            <TextField id="activityDate" label="Enter date."
+            required
             value={selectedDate}
             onChange={handleDateChange('date')}
             />
@@ -69,14 +69,14 @@ function AddActivity(props) {
           Save Activity
         </Button>
         </div>
-      </header>  
+      </header>
     );
 
 
     return (
-        user ? 
-          saved ? (<RedirectToGoals/>) : (<Content/>) 
-          : (<Redir/>)     
+        user ?
+          saved ? (<RedirectToGoals/>) : (<Content/>)
+          : (<Redir/>)
     );
 }
 
