@@ -1,9 +1,6 @@
 import {makeStyles} from '@material-ui/core/styles';
 
 export default class Styles {
-  constructor() {
-
-  }
 
   static getUseStyles = (theme?: any) => {
     return makeStyles(() => ({

@@ -8,9 +8,6 @@ export default class DB {
     private goals = null;
     private static firebaseProject = {};
 
-    constructor() {
-    }
-
     private static firebaseInit = () => {
         const firebaseConfig = {
             apiKey: "AIzaSyDKuA_rd0CBTjtumUxtV8iE7e8dJljz5o8",
@@ -36,7 +33,7 @@ export default class DB {
         return DB.instance;
     }
 
-    private getGoals = (callback: any) => {
+    public getGoals = (callback: any) => {
         if (this.goals) {
             callback(this.goals);
         } else {
@@ -44,7 +41,7 @@ export default class DB {
         }
     };
 
-    private getUser = () => {
+    public getUser = () => {
         return this.user;
     };
 
@@ -52,7 +49,7 @@ export default class DB {
         this.user = u;
     }
 
-    private getTargets = (callback: any) => {
+    public getTargets = (callback: any) => {
         if (this.targets) {
             callback(this.targets);
         } else {
@@ -64,6 +61,8 @@ export default class DB {
         var db = firebase.firestore();
         let goals: any[] = [];
         db.collection("goals").get().then(function(querySnapshot) {
+            console.log("Goals:");
+            console.log(querySnapshot);
             querySnapshot.forEach(function (doc) {
                 goals.push(doc.data());
             });
@@ -91,7 +90,7 @@ export default class DB {
         })
     };
 
-    private saveActivity = (user: any, activity: any, qty: number, actDate: Date) => {
+    public saveActivity = (user: any, activity: any, qty: number, actDate: Date) => {
         const db = firebase.firestore();
 
         var record = {
@@ -103,7 +102,7 @@ export default class DB {
         return db.collection("activity").add(record);
     };
 
-    private saveTarget = (user: any, activity: any, target: any, unit: any) => {
+    public saveTarget = (user: any, activity: any, target: any, unit: any) => {
         const db = firebase.firestore();
         var record = {
             user: user,
@@ -117,7 +116,7 @@ export default class DB {
         return db.collection("targets").add(record);
     };
 
-    private updateTarget = (target: any, amount: number) => {
+    public updateTarget = (target: any, amount: number) => {
         const db = firebase.firestore();
         const id = target.id;
         target.achieved = Number((target.achieved? target.achieved: 0)) + Number(amount);

@@ -16,8 +16,8 @@ interface ILoginStates {
 export default class Login extends React.Component<ILoginProps, ILoginStates> {
   private classes: any;
 
-  constructor() {
-    super({onSignIn: () => null});
+  constructor(props: ILoginProps) {
+    super(props);
 
     this.state = {
       signedIn: false
