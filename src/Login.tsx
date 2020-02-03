@@ -28,6 +28,11 @@ export default class Login extends React.Component<ILoginProps, ILoginStates> {
   }
 
   private onSignInClick() {
+    if (this.state.signedIn) {
+
+    } else {
+
+    }
     firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => {
         var provider = new firebase.auth.GoogleAuthProvider();

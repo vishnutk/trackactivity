@@ -1,11 +1,12 @@
 import * as firebase from 'firebase'
+import { IGoogleUser } from './Interfaces';
 
 export default class DB {
     private static instance: DB;
 
-    private user = null;
-    private targets = null;
-    private goals = null;
+    private static user?: IGoogleUser;
+    private static targets: any[] = [];
+    private static goals? = null;
     private static firebaseProject = {};
 
     private static firebaseInit = () => {
@@ -34,26 +35,35 @@ export default class DB {
     }
 
     public getGoals = (callback: any) => {
-        if (this.goals) {
-            callback(this.goals);
+        if (DB.goals) {
+            callback(DB.goals);
         } else {
             this.fetchGoals(callback);
         }
     };
 
     public getUser = () => {
-        return this.user;
+        return DB.user;
     };
 
     public setUser = (u: any) => {
-        this.user = u;
+        console.log("in DB.setUser");
+        console.log(u);
+        DB.user = u;
     }
 
     public getTargets = (callback: any) => {
-        if (this.targets) {
-            callback(this.targets);
+        console.log("in getTargets");
+        console.log(DB.targets);
+        console.log(DB.user);
+        if (DB.targets && DB.targets.length > 0) {
+            callback(DB.targets);
         } else {
-            this.fetchTargets(callback, this.user);
+            if (DB.user) {
+                this.fetchTargets(callback, DB.user.email);
+            } else {
+                callback(DB.targets);
+            }
         }
     };
 
@@ -76,6 +86,7 @@ export default class DB {
     private fetchTargets = (callback: any, user: any) => {
         let goals: any[] = [];
         const db = firebase.firestore();
+        console.log("in fetch targets:" + user);
 
         db.collection("targets").where('user', '==', user).get().then(function(querySnapshot) {
             querySnapshot.forEach(function (doc) {
@@ -83,6 +94,7 @@ export default class DB {
                 data.id = doc.id;
                 goals.push(data);
             });
+            DB.targets = goals;
             callback(goals);
         }).catch(function(error){
             console.log(error);
@@ -90,7 +102,7 @@ export default class DB {
         })
     };
 
-    public saveActivity = (user: any, activity: any, qty: number, actDate: Date) => {
+    public saveActivity = (user: string, activity: string, qty: number, actDate: Date) => {
         const db = firebase.firestore();
 
         var record = {
@@ -99,10 +111,13 @@ export default class DB {
             activity: activity,
             qty: qty
         };
+        console.log("in save activity");
+        console.log(record);
         return db.collection("activity").add(record);
     };
 
     public saveTarget = (user: any, activity: any, target: any, unit: any) => {
+        console.log("in save target");
         const db = firebase.firestore();
         var record = {
             user: user,
@@ -113,6 +128,7 @@ export default class DB {
             unit: unit,
             achieved: 0
         };
+        console.log(record);
         return db.collection("targets").add(record);
     };
 

@@ -4,6 +4,12 @@ import './App.css';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+
 import * as firebase from 'firebase'
 
 import GoogleUserAvatar from './GoogleUserAvatar';
@@ -15,14 +21,9 @@ import DB from './DB';
 import Goals from './Goals';
 import SelectGoal from './SelectGoal';
 import AddGoal from './AddGoal';
+import AddActivity from './AddActivity';
 
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route
-} from "react-router-dom";
-
-import { IGoal, IGoogleUser } from './Interfaces';
+import { IGoal, IGoogleUser, ITarget } from './Interfaces';
 
 interface IAppProps {
 }
@@ -32,23 +33,31 @@ interface IAppStates {
   signedIn: boolean;
   loaded: boolean;
   selectedGoal: IGoal;
+  target: ITarget;
 }
 
 export default class App extends React.Component<IAppProps, IAppStates> {
   private classes: any;
   private db = DB.getInstance();
+  private goalRef: any;
 
   constructor(props:IAppProps) {
     super(props);
 
     this.classes = Styles.getUseStyles();
+    this.goalRef = React.createRef();
 
     this.state = {
       user: {displayName: '', photoURL: '', email: ''},
       signedIn: false,
       loaded: false,
-      selectedGoal: {name: '', unit: '', suggested: 0}
-
+      selectedGoal: {name: '', unit: '', suggested: 0},
+      target: {achieved: 0,
+        goal: '',
+        lastModifled: new Date(),
+        startDate: new Date(),
+        unit: '',
+        user: ''}
     };
 
     this.loadUser();
@@ -59,9 +68,13 @@ export default class App extends React.Component<IAppProps, IAppStates> {
       if (user) {
           console.log("in callback");
           console.log(user);
-          this.setState({user: user as IGoogleUser, signedIn: true});
+          this.db.setUser(user);
+          this.setState({user: user as IGoogleUser, signedIn: true, loaded: true});
+          if (this.goalRef && this.goalRef.current) {
+            this.goalRef.current.setUser(user);
+          }
       } else {
-        //
+        this.setState({loaded: true});
       }
     });
   }
@@ -69,7 +82,10 @@ export default class App extends React.Component<IAppProps, IAppStates> {
   signInSuccess = (u: IGoogleUser) => {
     if (u) {
       this.db.setUser(u);
-      this.setState({user: u, signedIn: true});
+      this.setState({user: u, signedIn: true, loaded: true});
+      if (this.goalRef && this.goalRef.current) {
+        this.goalRef.current.setUser(u);
+      }
       console.log(u);
     }
   }
@@ -96,13 +112,16 @@ export default class App extends React.Component<IAppProps, IAppStates> {
                 <Login onSignIn={this.signInSuccess} />
               </Route>
               <Route path="/goals">
-                <Goals/>
+                <Goals ref={this.goalRef} signedIn={this.state.signedIn}/>
               </Route>
               <Route path="/selectgoal">
                 <SelectGoal></SelectGoal>
               </Route>
-              <Route path="/goalsadd">
-                <AddGoal user={this.state.user} activity={this.state.selectedGoal}></AddGoal>
+              <Route path="/goalsadd/:goal/:unit/:suggest">
+                <AddGoal user={this.state.user}></AddGoal>
+              </Route>
+              <Route path="/addactivity">
+                <AddActivity user={this.state.user}></AddActivity>
               </Route>
             </Switch>
           </Router>

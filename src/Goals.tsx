@@ -1,38 +1,47 @@
 import React from 'react';
 import Styles from './styles';
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { GridList, GridListTile, GridListTileBar } from '@material-ui/core';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import DB from './DB';
-import { IState } from './Interfaces';
+import { IState, IGoogleUser } from './Interfaces';
 
 interface IGoalsState extends IState {
   targets: any[];
+  user?: IGoogleUser;
 }
 
 interface IGoalsProps {
-  
+  signedIn: boolean
 }
 
-export default class Goals extends React.Component<IGoalsProps, IGoalsState> {
+export default class Goals extends React.Component<any, IGoalsState> {
   private classes: any;
 
-  constructor(props: IGoalsProps) {
+  constructor(props: any) {
     super(props);
 
     this.state = {
       isInitialized: false,
-      signedIn: true,
+      signedIn: false,
       targets: []
     };
-
+    console.log("getting targets");
     DB.getInstance().getTargets(this.setTargets.bind(this));
     this.classes = Styles.getUseStyles();
   }
 
+  public setUser(user: IGoogleUser) {
+    console.log("set user");
+    this.setState({user: user});
+    DB.getInstance().getTargets(this.setTargets.bind(this));
+  }
+
   private setTargets(targets: any[]) {
+    console.log("setTargets callback");
+    console.log(targets);
     this.setState({targets: targets, isInitialized: true});
   }
 

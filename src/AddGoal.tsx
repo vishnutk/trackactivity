@@ -1,52 +1,58 @@
 import React from "react";
-import { IState, IProps, IGoal, IGoogleUser} from './Interfaces';
+import { IState, IGoal, IGoogleUser} from './Interfaces';
 import DB from './DB';
 import Styles from './styles';
 import { Redirect } from 'react-router-dom';
 import { Button, TextField, InputAdornment } from '@material-ui/core';
+import { withRouter } from "react-router";
 
 interface IAddGoalState extends IState {
     saved: boolean;
     target: number;
 }
 
-interface IAddGoalProps extends IProps {
-    user?: IGoogleUser;
-    activity: IGoal
+interface IAddGoalStateProps {
+    user?: IGoogleUser
 }
 
-export default class AddGoal extends React.Component<IAddGoalProps, IAddGoalState> {
+class AddGoal extends React.Component<any, IAddGoalState> {
     private classes: any;
-  
-    constructor(props: IAddGoalProps) {
+    
+    private goal: IGoal = {name: '', unit: '', suggested: 0};
+
+    constructor(props: any) {
       super(props);
-  
+    
       this.state = {
-        isInitialized: false,
+        isInitialized: props && props.user && props.user.email !== null,
         signedIn: true,
         saved: false,
         target: 0
       };
+      this.goal.name = props.match.params.goal;
+      this.goal.unit = props.match.params.unit;
+      this.goal.suggested = props.match.params.suggest;
 
       this.classes = Styles.getUseStyles();
-      console.log("in add goal");
-      console.log(props);
     }
 
-    private handleTargetChange (props: any, event: any)  {
+    private handleTargetChange (event: any)  {
         console.log(event);
         this.setState({target: event.target.value});
       }
 
     private saveTarget() {
-        if (this.props.user) {
-            DB.getInstance().saveTarget(this.props.user.email, this.props.activity.name, this.state.target, this.props.activity.unit);
+        console.log("in save target of addGoal");
+        console.log(this.state);
+        if (this.state.isInitialized) {
+            console.log("in save target of addGoal2");
+            DB.getInstance().saveTarget(this.props.user.email, this.goal.name, this.state.target, this.goal.unit);
             this.setState({saved: true});
         }        
     }
 
     render() {
-        if (!this.props.user || this.props.user.displayName === '') {
+        if (!this.props.user || this.props.user.email === '') {
             return( <Redirect to='/' />)
         }
         if (this.state.saved) {
@@ -56,17 +62,17 @@ export default class AddGoal extends React.Component<IAddGoalProps, IAddGoalStat
         return (
             <header className="App-header">
             <div>
-              <label>{this.props.user.displayName}</label>
+              {<label>{this.props.user.displayName}</label>}
             </div>
           <div className={this.classes.Button}>
-              <label>{this.props.activity.name}</label>
+              <label>{this.goal.name}</label>
               <TextField id="target" label="Select your target."
-              defaultValue={this.props.activity.suggested} required
+              required
               value={this.state.target}
-              
-              InputProps={{
-                startAdornment: <InputAdornment position="start">{this.props.activity.unit}</InputAdornment>,
-              }}
+              onChange={this.handleTargetChange}
+            //   InputProps={{
+            //     startAdornment: <InputAdornment position="start">{this.props.unit}</InputAdornment>,
+            //   }}
               />
           </div>
           <div>
@@ -78,4 +84,7 @@ export default class AddGoal extends React.Component<IAddGoalProps, IAddGoalStat
         );
     }
 }
+
+export default withRouter(AddGoal);
+
   

@@ -45,7 +45,7 @@ export default class SelectGoal extends React.Component<IProps, ISelectGoalsStat
                         subtitle={<span>Target: {tile.suggested} {tile.unit}</span>}
                         actionIcon={
         
-                        <Link to={"/goalsadd/" + tile.name + "/" + tile.unit + "/" + tile.suggested}>
+                        <Link to={"/goalsadd/" + tile.name + "/" + tile.unit + "/" + tile.suggested} >
                           <Button variant="contained" color="primary">
                             Select
                           </Button>

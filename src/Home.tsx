@@ -13,9 +13,6 @@ interface IHomeStates {
 }
 
 export default class Home extends React.Component<IHomeProps, IHomeStates> {
-  constructor() {
-    super({});
-  }
 
   loadingText = () => {
     return (<h1>Loading...</h1>);
@@ -42,9 +39,9 @@ export default class Home extends React.Component<IHomeProps, IHomeStates> {
   }
 
   render() {
-    // if (!this.props.loaded) {
-    //   return this.loadingText();
-    // } else
+    if (!this.props.loaded) {
+      return this.loadingText();
+    } else
     if (this.props.user && this.props.user.displayName) {
       return this.redirectToGoals();
     } else {

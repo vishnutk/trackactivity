@@ -7,12 +7,6 @@ export interface IState {
 export interface IProps {
 
 }
-export interface ITarget {
-    startDate: Date;
-    goal: string;
-    achieved: number;
-    unit: string;
-}
 
 export interface IGoal {
     name: string;
@@ -24,5 +18,15 @@ export interface IGoogleUser {
     displayName: string;
     photoURL: string;
     email: string;
-  }
+}
+
+export interface ITarget {
+    achieved: number;
+    goal: string;
+    lastModifled: Date;
+    startDate: Date;
+    unit: string;
+    user: string;
+}
+  
 
